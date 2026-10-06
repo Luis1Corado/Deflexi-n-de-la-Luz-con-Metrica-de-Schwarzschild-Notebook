@@ -27,55 +27,156 @@ Objetivo: calcular cuánto se desvía un rayo de luz que pasa cerca de un objeto
 md(r"""
 ## 1. Métrica de Schwarzschild y geodésicas nulas
 
-Para el exterior de una masa $M$ esférica y estática, con signatura $(-,+,+,+)$:
+### 1.1 La métrica
 
-$$ds^2 = -\left(1-\frac{r_s}{r}\right)c^2dt^2 + \left(1-\frac{r_s}{r}\right)^{-1}dr^2 + r^2\left(d\theta^2+\sin^2\theta\,d\varphi^2\right),\qquad r_s=\frac{2GM}{c^2}.$$
+Para el exterior de una masa $M$ esférica y estática, en coordenadas $(ct, r, \theta, \varphi)$ y con signatura $(-,+,+,+)$:
 
-La luz sigue **geodésicas nulas** ($ds^2=0$). Por la simetría esférica la órbita queda en un plano, y tomamos $\theta=\pi/2$. Con parámetro afín $\lambda$, la métrica no depende de $t$ ni de $\varphi$, así que hay dos cantidades conservadas:
+$$ds^2 = -f(r)\,c^2dt^2 + \frac{dr^2}{f(r)} + r^2\left(d\theta^2+\sin^2\theta\,d\varphi^2\right),\qquad f(r)\equiv 1-\frac{r_s}{r},\quad r_s\equiv\frac{2GM}{c^2}.$$
 
-$$E = \left(1-\frac{r_s}{r}\right)c^2\dot t,\qquad L = r^2\dot\varphi .$$
+Lejos de la masa ($r\gg r_s$) $f\to1$ y recuperamos la métrica de Minkowski en coordenadas esféricas.
 
-El cociente $b = cL/E$ es el **parámetro de impacto**: la distancia a la que pasaría el rayo del centro si no hubiera deflexión (lejos de la masa, donde el espaciotiempo es plano).
+### 1.2 Trayectoria de un rayo de luz: geodésica nula
+
+Un rayo de luz sigue una geodésica con $ds^2=0$. Parametrizamos la curva con un parámetro afín $\lambda$ y escribimos $\dot{x}^\mu = dx^\mu/d\lambda$. Las geodésicas son las extremales del lagrangiano
+
+$$\mathcal{L}=\tfrac12\,g_{\mu\nu}\dot x^\mu\dot x^\nu = \tfrac12\left[-f\,c^2\dot t^{\,2}+\frac{\dot r^2}{f}+r^2\dot\theta^2+r^2\sin^2\theta\,\dot\varphi^2\right],$$
+
+con la condición adicional (luz) $2\mathcal{L}=0$.
+
+**Paso 1: el movimiento es plano.** La ecuación de Euler–Lagrange para $\theta$ es
+
+$$\frac{d}{d\lambda}\left(r^2\dot\theta\right)=r^2\sin\theta\cos\theta\,\dot\varphi^2 .$$
+
+Si en algún instante $\theta=\pi/2$ y $\dot\theta=0$, el lado derecho se anula ($\cos\theta=0$) y se mantiene $\dot\theta=0$: la órbita queda en el plano ecuatorial $\theta=\pi/2$. Como el problema es esféricamente simétrico, siempre podemos elegir los ejes para que esto ocurra. Con $\theta=\pi/2$ ($\sin\theta=1$, $\dot\theta=0$):
+
+$$\mathcal{L}=\tfrac12\left[-f\,c^2\dot t^{\,2}+\frac{\dot r^2}{f}+r^2\dot\varphi^2\right].$$
+
+**Paso 2: dos cantidades conservadas.** $\mathcal{L}$ no depende explícitamente de $t$ ni de $\varphi$ (variables cíclicas), así que sus momentos conjugados son constantes:
+
+$$\frac{\partial\mathcal L}{\partial\dot t}=-f c^2\dot t\equiv -E \;\Rightarrow\; \boxed{E=f\,c^2\,\dot t}\qquad\qquad \frac{\partial\mathcal L}{\partial\dot\varphi}=r^2\dot\varphi\equiv L\;\Rightarrow\;\boxed{L=r^2\dot\varphi}$$
+
+($E$ está asociada a la simetría bajo traslaciones temporales y $L$ a la simetría bajo rotaciones.)
+
+**Paso 3: condición nula.** Imponemos $ds^2=0$, es decir $-f c^2\dot t^{\,2}+\dot r^2/f+r^2\dot\varphi^2=0$. Despejamos $\dot t$ y $\dot\varphi$ de las constantes de movimiento:
+
+$$\dot t=\frac{E}{f c^2},\qquad \dot\varphi=\frac{L}{r^2}.$$
+
+Sustituyendo:
+
+$$-f c^2\frac{E^2}{f^2c^4}+\frac{\dot r^2}{f}+r^2\frac{L^2}{r^4}=0
+\;\Longrightarrow\;
+-\frac{E^2}{f c^2}+\frac{\dot r^2}{f}+\frac{L^2}{r^2}=0 .$$
+
+Multiplicando por $f$ y despejando $\dot r^2$:
+
+$$\boxed{\dot r^2=\frac{E^2}{c^2}-f(r)\,\frac{L^2}{r^2}=\frac{E^2}{c^2}-\left(1-\frac{r_s}{r}\right)\frac{L^2}{r^2}}\tag{1}$$
+
+### 1.3 Significado del parámetro de impacto $b$
+
+Lejos de la masa ($f\to1$) la ecuación (1) da $|\dot r|\to E/c$: el fotón se mueve en línea recta con "velocidad" $E/c$ en unidades del parámetro afín. Para una recta que pasa a distancia perpendicular $b$ del origen, el momento angular es $L=b\cdot(E/c)$ (distancia $\times$ velocidad). Por lo tanto
+
+$$b\equiv\frac{c\,L}{E}$$
+
+es el **parámetro de impacto**: la distancia a la que pasaría el rayo del centro si no hubiera deflexión.
 """)
 
 md(r"""
-## 2. Ecuación de la órbita
+## 2. Ecuación de la órbita $u(\varphi)$
 
-Imponiendo $ds^2=0$ y sustituyendo $\dot t$ y $\dot\varphi$:
+Queremos la forma de la trayectoria, $r(\varphi)$, no su evolución en $\lambda$. Eliminamos $\lambda$ con la regla de la cadena:
 
-$$\dot r^2 = \frac{E^2}{c^2} - \left(1-\frac{r_s}{r}\right)\frac{L^2}{r^2}.$$
+$$\frac{dr}{d\varphi}=\frac{\dot r}{\dot\varphi}=\dot r\,\frac{r^2}{L}
+\quad\Longrightarrow\quad
+\left(\frac{dr}{d\varphi}\right)^2=\frac{r^4}{L^2}\,\dot r^2 .$$
 
-Dividiendo por $\dot\varphi^2 = L^2/r^4$ y definiendo $u=1/r$:
+**Paso 1.** Sustituimos (1):
 
-$$\left(\frac{du}{d\varphi}\right)^2 = \frac{1}{b^2} - u^2 + r_s\,u^3 .$$
+$$\left(\frac{dr}{d\varphi}\right)^2=\frac{r^4}{L^2}\left[\frac{E^2}{c^2}-\left(1-\frac{r_s}{r}\right)\frac{L^2}{r^2}\right]
+=\frac{E^2}{c^2L^2}\,r^4-\left(1-\frac{r_s}{r}\right)r^2 .$$
 
-Derivando respecto de $\varphi$:
+Como $\dfrac{E^2}{c^2L^2}=\dfrac{1}{b^2}$:
 
-$$\boxed{\frac{d^2u}{d\varphi^2} + u = \frac{3}{2}\,r_s\,u^2 = \frac{3GM}{c^2}u^2}$$
+$$\left(\frac{dr}{d\varphi}\right)^2=\frac{r^4}{b^2}-r^2+r_s\,r .$$
 
-Sin el término de la derecha (espacio plano) la solución es una recta: $u_0=\sin\varphi/b$. El término $\tfrac32 r_s u^2$ es la corrección relativista y es pequeño si $r_s \ll b$.
+**Paso 2: cambio de variable $u=1/r$.** Entonces $\dfrac{du}{d\varphi}=-\dfrac{1}{r^2}\dfrac{dr}{d\varphi}$, así que $\left(\dfrac{du}{d\varphi}\right)^2=\dfrac{1}{r^4}\left(\dfrac{dr}{d\varphi}\right)^2$. Dividiendo el resultado anterior por $r^4$:
+
+$$\left(\frac{du}{d\varphi}\right)^2=\frac{1}{b^2}-\frac{1}{r^2}+\frac{r_s}{r^3}
+\quad\Longrightarrow\quad
+\boxed{\left(\frac{du}{d\varphi}\right)^2=\frac{1}{b^2}-u^2+r_s\,u^3}\tag{2}$$
+
+**Paso 3: derivar respecto de $\varphi$.** Escribimos $u'=du/d\varphi$. Derivando ambos lados de (2):
+
+$$2u'u''=\left(-2u+3r_s u^2\right)u' .$$
+
+Dividiendo por $2u'$ (válido si $u'\neq0$):
+
+$$\boxed{\frac{d^2u}{d\varphi^2}+u=\frac32\,r_s\,u^2=\frac{3GM}{c^2}\,u^2}\tag{3}$$
+
+**Comprobación en el caso plano ($r_s=0$).** La ecuación (3) se reduce a $u''+u=0$, con solución $u_0=\sin\varphi/b$, es decir $r\sin\varphi=b$: la recta horizontal $y=b$. Además satisface (2): $u_0'^2=\cos^2\varphi/b^2=1/b^2-u_0^2$ ✓. El término $\tfrac32 r_s u^2$ es la corrección relativista; es pequeño frente a $u$ cuando $r_s\ll b$, porque $u\sim1/b$ implica $r_s u^2/u\sim r_s/b$.
 """)
 
 md(r"""
-## 3. Solución perturbativa
+## 3. Solución perturbativa y ángulo de deflexión
 
-Sea $\varepsilon = r_s/b \ll 1$. Escribimos $u = u_0 + u_1$ con $u_0=\sin\varphi/b$. A primer orden:
+### 3.1 Desarrollo en el parámetro pequeño $\varepsilon=r_s/b$
 
-$$u_1'' + u_1 = \frac{3 r_s}{2}\,\frac{\sin^2\varphi}{b^2} = \frac{3r_s}{4b^2}\left(1-\cos 2\varphi\right).$$
+Escribimos $u=u_0+u_1+\dots$, donde $u_0=\sin\varphi/b$ es la solución sin gravedad y $u_1=O(r_s)$ es la primera corrección. Sustituimos en (3):
 
-Una solución particular es $u_1 = \dfrac{r_s}{4b^2}\left(3+\cos 2\varphi\right)=\dfrac{r_s}{2b^2}\left(1+\cos^2\varphi\right)$ (se verifica en la sección 4), de modo que
+$$\underbrace{u_0''+u_0}_{=0}+u_1''+u_1=\frac32 r_s\left(u_0+u_1\right)^2=\frac32 r_s u_0^2+\underbrace{3r_s u_0u_1+\dots}_{O(r_s^2)} .$$
 
-$$u(\varphi) = \frac{\sin\varphi}{b} + \frac{r_s}{2b^2}\left(1+\cos^2\varphi\right).$$
+Conservando solo el orden $r_s^1$:
 
-**Ángulo de deflexión.** El rayo viene del infinito ($u=0$) en $\varphi=-\delta_1$ y se va al infinito en $\varphi=\pi+\delta_2$. Con $\delta$ pequeño, $\sin\varphi\approx\mp\delta$ y $\cos^2\varphi\approx1$, entonces
+$$u_1''+u_1=\frac32\,r_s\,\frac{\sin^2\varphi}{b^2}.$$
 
-$$0 = \mp\frac{\delta}{b} + \frac{r_s}{b^2}\quad\Rightarrow\quad \delta_1=\delta_2=\frac{r_s}{b}.$$
+### 3.2 Resolver la ecuación para $u_1$
 
-La dirección total cambia en $\hat\alpha=\delta_1+\delta_2$:
+Usamos $\sin^2\varphi=\tfrac12(1-\cos2\varphi)$:
 
-$$\boxed{\hat\alpha = \frac{2r_s}{b} = \frac{4GM}{c^2 b}}$$
+$$u_1''+u_1=\frac{3r_s}{4b^2}\left(1-\cos2\varphi\right).$$
 
-(con $r_s = 2GM/c^2$). Es **el doble** del valor newtoniano ($2GM/c^2b$, tratando la luz como partícula de velocidad $c$). El factor extra viene de la curvatura espacial: la parte espacial de la métrica contribuye tanto como la dilatación temporal.
+Proponemos $u_1=A+B\cos2\varphi$. Entonces $u_1''=-4B\cos2\varphi$ y
+
+$$u_1''+u_1=A+(1-4)B\cos2\varphi=A-3B\cos2\varphi .$$
+
+Igualando coeficientes:
+
+$$A=\frac{3r_s}{4b^2},\qquad -3B=-\frac{3r_s}{4b^2}\;\Rightarrow\;B=\frac{r_s}{4b^2}.$$
+
+Por lo tanto $u_1=\dfrac{r_s}{4b^2}\left(3+\cos2\varphi\right)$. Con $\cos2\varphi=2\cos^2\varphi-1$ se tiene $3+\cos2\varphi=2\left(1+\cos^2\varphi\right)$, es decir
+
+$$u_1=\frac{r_s}{2b^2}\left(1+\cos^2\varphi\right).$$
+
+**Soluciones homogéneas.** A $u_1$ se le podría sumar $C_1\cos\varphi+C_2\sin\varphi$. El término en $\sin\varphi$ solo redefine $b$ (y con la definición $b=cL/E$ se verifica a este orden que $C_2=0$, ver abajo), y el término en $\cos\varphi$ es antisimétrico respecto de $\varphi=\pi/2$; elegimos el eje $x$ de modo que la órbita sea simétrica respecto del punto de máximo acercamiento ($\varphi=\pi/2$), lo que impone $C_1=0$. La solución a primer orden es
+
+$$\boxed{u(\varphi)=\frac{\sin\varphi}{b}+\frac{r_s}{2b^2}\left(1+\cos^2\varphi\right)}\tag{4}$$
+
+*Chequeo de $C_2=0$:* donde $u=0$ (rayo en el infinito), la ecuación (2) exige $u'^2=1/b^2$. Con (4), $u'=\dfrac{\cos\varphi}{b}-\dfrac{r_s}{b^2}\cos\varphi\sin\varphi$, y cerca de $\varphi\approx0$ (donde $\sin\varphi=O(r_s/b)$) queda $u'=\dfrac1b+O(r_s^2)$ ✓.
+
+### 3.3 Ángulo de deflexión
+
+En el infinito $u=0$. En el caso plano esto ocurre en $\varphi=0$ y $\varphi=\pi$ (la recta barre un ángulo $\pi$). Con la corrección, los ceros se desplazan ligeramente. Por simetría respecto de $\varphi=\pi/2$ son $\varphi=-\delta$ y $\varphi=\pi+\delta$ con $\delta=O(r_s/b)$ pequeño. Resolvemos $u(\pi+\delta)=0$ con (4):
+
+$$\frac{\sin(\pi+\delta)}{b}+\frac{r_s}{2b^2}\left[1+\cos^2(\pi+\delta)\right]=0 .$$
+
+Como $\sin(\pi+\delta)=-\sin\delta\approx-\delta$ y $\cos^2(\pi+\delta)=\cos^2\delta\approx1-\delta^2\approx1$ (el error cometido es de orden $r_s^2$, que ya despreciamos):
+
+$$-\frac{\delta}{b}+\frac{r_s}{2b^2}\cdot2=0\quad\Longrightarrow\quad\delta=\frac{r_s}{b}.$$
+
+La dirección de propagación gira un ángulo igual al exceso del ángulo barrido sobre $\pi$:
+
+$$\hat\alpha=\Delta\varphi-\pi=(\pi+2\delta)-\pi=2\delta=\frac{2r_s}{b}.$$
+
+Con $r_s=2GM/c^2$:
+
+$$\boxed{\hat\alpha=\frac{2r_s}{b}=\frac{4GM}{c^2\,b}}\tag{5}$$
+
+### 3.4 Comparación con el cálculo newtoniano
+
+Si tratamos la luz como una partícula de velocidad $c$ que sigue (aproximadamente) la recta $y=b$, $x=ct$, la fuerza transversal por unidad de masa es $\dfrac{GM\,b}{(b^2+c^2t^2)^{3/2}}$. El cambio de velocidad transversal es
+
+$$\Delta v_\perp=\int_{-\infty}^{\infty}\frac{GM\,b\,dt}{(b^2+c^2t^2)^{3/2}}=\frac{GM}{cb}\int_{-\infty}^{\infty}\frac{ds}{(1+s^2)^{3/2}}=\frac{2GM}{cb}\qquad(s=ct/b),$$
+
+y el ángulo es $\alpha_N=\Delta v_\perp/c=\dfrac{2GM}{c^2b}$. La relatividad general predice **el doble**: la mitad viene de la dilatación temporal ($g_{tt}$) y la otra mitad de la curvatura espacial ($g_{rr}$), que en el cálculo newtoniano no aparece.
 """)
 
 md(r"""
@@ -95,6 +196,12 @@ u1 = rs/(2*b**2) * (1 + sp.cos(phi)**2)
 # u1'' + u1 - (3/2) rs u0^2 debe ser 0
 residuo = sp.simplify(sp.diff(u1, phi, 2) + u1 - sp.Rational(3, 2)*rs*u0**2)
 print("Residuo de la ecuación perturbada:", residuo)
+
+# la solución u0+u1 satisface la integral primera (2) hasta O(rs^2)
+e = sp.symbols('e')
+uu = (u0 + e*u1)
+res2 = sp.series((sp.diff(uu, phi)**2 - (1/b**2 - uu**2 + e*rs*uu**3)).simplify(), e, 0, 2).removeO()
+print("Residuo de la ecuación (2) a primer orden en rs:", sp.simplify(res2))
 
 # ángulo de salida: resolver u(pi + d) = 0 a primer orden en d
 d = sp.symbols('delta')
