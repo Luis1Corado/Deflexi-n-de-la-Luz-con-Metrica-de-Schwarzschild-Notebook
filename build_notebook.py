@@ -214,11 +214,51 @@ print("delta =", delta_sol, "  ->  alpha = 2*delta =", sp.simplify(2*delta_sol))
 md(r"""
 ## 5. Integración numérica exacta
 
-Sin aproximar, a partir de $(du/d\varphi)^2 = b^{-2}-u^2+r_s u^3$, el rayo llega a una distancia mínima $r_0=1/u_0$, donde $u_0$ es la menor raíz positiva de $b^{-2}-u^2+r_su^3=0$. Entonces
+La solución perturbativa (4) solo vale para $r_s\ll b$. Para saber cuánto falla, calculamos la deflexión **exacta** a partir de la integral primera (2), sin aproximar.
 
-$$\Delta\varphi = 2\int_0^{u_0}\frac{du}{\sqrt{b^{-2}-u^2+r_s u^3}},\qquad \hat\alpha_{\rm exacto}=\Delta\varphi-\pi .$$
+### 5.1 De la ecuación (2) a una integral para $\Delta\varphi$
 
-Trabajamos en unidades $GM/c^2 = 1$ (así $r_s=2$ y las longitudes se miden en $GM/c^2$).
+De (2), $\left(\dfrac{du}{d\varphi}\right)^2=P(u)$ con
+
+$$P(u)\equiv\frac{1}{b^2}-u^2+r_s\,u^3 .$$
+
+Entonces $\dfrac{du}{d\varphi}=\pm\sqrt{P(u)}$, o bien $d\varphi=\pm\dfrac{du}{\sqrt{P(u)}}$.
+
+**Trayectoria de $u$.** El rayo llega desde el infinito ($u=0$), se acerca ($u$ crece), alcanza su máximo acercamiento y se aleja ($u$ decrece hasta $0$). En el punto de máximo acercamiento $r=r_0$ se tiene $u=u_0\equiv1/r_0$ y $du/d\varphi=0$, es decir $P(u_0)=0$. Por lo tanto:
+
+- $u_0$ es **la menor raíz positiva** de $P(u)=0$ (la cúbica $r_su^3-u^2+b^{-2}=0$; entre $0$ y $u_0$ se cumple $P>0$, que es lo que permite que $u$ crezca desde $0$).
+- La rama de ida ($u$ creciente, signo $+$) y la de vuelta ($u$ decreciente, signo $-$) aportan el mismo ángulo, por simetría respecto de $\varphi=\pi/2$.
+
+El ángulo total barrido es entonces
+
+$$\Delta\varphi=2\int_0^{u_0}\frac{du}{\sqrt{P(u)}}=2\int_0^{u_0}\frac{du}{\sqrt{b^{-2}-u^2+r_s u^3}},\qquad\boxed{\hat\alpha_{\rm exacto}=\Delta\varphi-\pi}$$
+
+**Chequeo ($r_s=0$).** Aquí $u_0=1/b$ y $\Delta\varphi=2\int_0^{1/b}\dfrac{du}{\sqrt{b^{-2}-u^2}}=2\arcsin(bu)\Big|_0^{1/b}=2\cdot\dfrac\pi2=\pi$, así que $\hat\alpha=0$ ✓.
+
+### 5.2 Tratamiento numérico de la singularidad en $u_0$
+
+En $u=u_0$ el integrando diverge como $(u_0-u)^{-1/2}$ (singularidad integrable, pero que degrada una cuadratura ordinaria). Como $u_0$ es raíz de $P$, podemos factorizar $P(u)=(u_0-u)\,Q(u)$. Dividiendo $r_s u^3-u^2+b^{-2}$ entre $(u-u_0)$:
+
+$$r_su^3-u^2+b^{-2}=(u-u_0)\left[r_s u^2+(r_su_0-1)\,u+(r_su_0-1)\,u_0\right],$$
+
+donde el resto de la división es cero porque $P(u_0)=0$ implica $b^{-2}=u_0^2-r_su_0^3$ (la identidad se comprueba abajo con SymPy). Como $(u-u_0)=-(u_0-u)$:
+
+$$P(u)=(u_0-u)\,Q(u),\qquad Q(u)=-\left[r_su^2+(r_su_0-1)\,u+(r_su_0-1)\,u_0\right].$$
+
+Así el integrando es $\dfrac{1}{\sqrt{u_0-u}}\cdot\dfrac1{\sqrt{Q(u)}}$, con $1/\sqrt{Q}$ regular en $[0,u_0]$, y la integral se calcula con la opción `weight='alg'` de `scipy.integrate.quad`, que trata exactamente el factor $(u_0-u)^{-1/2}$.
+
+Trabajamos en unidades $GM/c^2=1$ (así $r_s=2$ y las longitudes se miden en $GM/c^2$).
+""")
+
+code(r"""
+# Verificación simbólica de la factorización P(u) = (u0 - u) Q(u),
+# usando que b^-2 = u0^2 - rs*u0^3  (porque P(u0) = 0)
+import sympy as sp
+u, u0s, rss = sp.symbols('u u_0 r_s', positive=True)
+binv2 = u0s**2 - rss*u0s**3
+P = binv2 - u**2 + rss*u**3
+Q = -(rss*u**2 + (rss*u0s - 1)*u + (rss*u0s - 1)*u0s)
+print("P - (u0-u)*Q =", sp.simplify(sp.expand(P - (u0s - u)*Q)))
 """)
 
 code(r"""
@@ -231,13 +271,13 @@ plt.rcParams.update({"figure.dpi": 110, "axes.grid": True, "grid.alpha": .3})
 def alpha_exacto(b, M=1.0):
     # deflexión exacta (rad) para parámetro de impacto b, en unidades G=c=1
     rs = 2*M
-    # b^-2 - u^2 + rs u^3 = 0 ; menor raíz positiva real
+    # 1) u0 = menor raíz positiva real de  rs u^3 - u^2 + 1/b^2 = 0
     raices = np.roots([rs, -1, 0, 1/b**2])
     u0 = min(r.real for r in raices if abs(r.imag) < 1e-12 and r.real > 0)
-    # P(u) = (u0-u) * Q(u),  Q(u) = -(rs u^2 + (rs u0 - 1) u + (rs u0^2 - u0))
-    B = rs*u0 - 1
-    Cc = B*u0
-    Q = lambda u: -(rs*u**2 + B*u + Cc)
+    # 2) Q(u) tal que P(u) = (u0 - u) Q(u)
+    k = rs*u0 - 1
+    Q = lambda u: -(rs*u**2 + k*u + k*u0)
+    # 3) integral con peso algebraico (u0-u)^(-1/2)  ->  wvar=(alpha, beta)=(0, -1/2)
     integral, _ = quad(lambda u: 1/np.sqrt(Q(u)), 0, u0, weight='alg', wvar=(0, -0.5))
     return 2*integral - np.pi
 
