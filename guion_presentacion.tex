@@ -1,0 +1,193 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\newcommand{\rs}{r_s}
+\newcommand{\ahat}{\hat\alpha}
+
+% Cajas: texto a decir vs. indicaciones para el notebook
+\newtcolorbox{decir}{colback=blue!4,colframe=blue!50!black,title=Qu\'e decir,fonttitle=\bfseries\small,left=4pt,right=4pt,top=2pt,bottom=2pt}
+\newtcolorbox{notebook}{colback=green!5,colframe=green!40!black,title=En el notebook,fonttitle=\bfseries\small,left=4pt,right=4pt,top=2pt,bottom=2pt}
+
+\title{Gui\'on de presentaci\'on\\[2pt]\large Deflexi\'on de la luz en la m\'etrica de Schwarzschild\\Relatividad General --- Presentaci\'on 1, Tema 1}
+\author{}
+\date{Mi\'ercoles 7 de octubre \,|\, Duraci\'on objetivo: 13 min (l\'imite 15)}
+
+\begin{document}
+\maketitle
+
+\section*{Resumen de tiempos}
+\begin{center}
+\begin{tabular}{@{}clr@{}}
+\toprule
+\# & Bloque & Tiempo \\
+\midrule
+1 & Motivaci\'on y planteamiento & 1:00 \\
+2 & M\'etrica, geod\'esicas nulas y cantidades conservadas & 2:30 \\
+3 & Ecuaci\'on de la \'orbita $u(\varphi)$ & 2:00 \\
+4 & Soluci\'on perturbativa y resultado $4GM/c^2b$ & 3:00 \\
+5 & El Sol y observaciones & 2:00 \\
+6 & Integral exacta y esfera de fotones & 1:30 \\
+7 & Conclusiones & 1:00 \\
+\midrule
+ & \textbf{Total} & \textbf{13:00} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent\textbf{Consejo:} lo que no cabe en 15 minutos (soluci\'on de $u_1$ paso a paso, factorizaci\'on de la integral, segundo orden $15\pi/4$) queda en el notebook como respaldo para preguntas.
+
+%------------------------------------------------------------
+\section{Motivaci\'on y planteamiento \hfill\small(1:00)}
+
+\begin{decir}
+Una de las primeras predicciones de la relatividad general que se pudo medir es que la luz se curva al pasar cerca de una masa. Newton tambi\'en predice una desviaci\'on, pero la relatividad predice el doble. Hoy voy a deducir ese resultado a partir de la m\'etrica de Schwarzschild y compararlo con una integral exacta y con las observaciones.
+\end{decir}
+
+\noindent\textbf{Pregunta central:} si un rayo de luz pasa a distancia $b$ de una masa $M$, \textquestiondown cu\'anto cambia su direcci\'on?
+
+%------------------------------------------------------------
+\section{M\'etrica y geod\'esicas nulas \hfill\small(2:30)}
+
+\noindent\textbf{M\'etrica} (signatura $-+++$), con $\rs=2GM/c^2$:
+\[
+ds^2=-\Bigl(1-\tfrac{\rs}{r}\Bigr)c^2dt^2+\Bigl(1-\tfrac{\rs}{r}\Bigr)^{-1}dr^2+r^2\,d\Omega^2 .
+\]
+
+\begin{decir}
+La luz sigue geod\'esicas nulas, $ds^2=0$. Por la simetr\'ia esf\'erica el movimiento es plano, as\'i que fijo $\theta=\pi/2$. La m\'etrica no depende de $t$ ni de $\varphi$, y eso me da dos cantidades conservadas: una energ\'ia $E$ y un momento angular $L$.
+\end{decir}
+
+\[
+E=\Bigl(1-\tfrac{\rs}{r}\Bigr)c^2\dot t,\qquad L=r^2\dot\varphi,\qquad b\equiv\frac{cL}{E}.
+\]
+
+\begin{decir}
+El cociente $b=cL/E$ es el par\'ametro de impacto: la distancia a la que pasar\'ia el rayo del centro si no hubiera desviaci\'on. Sustituyendo $\dot t$ y $\dot\varphi$ en $ds^2=0$ queda
+\end{decir}
+\[
+\dot r^2=\frac{E^2}{c^2}-\Bigl(1-\frac{\rs}{r}\Bigr)\frac{L^2}{r^2}.
+\]
+
+\begin{notebook}
+Secci\'on 1 (deducci\'on con el lagrangiano). No es necesario mostrarla completa; basta con nombrar los pasos.
+\end{notebook}
+
+%------------------------------------------------------------
+\section{Ecuaci\'on de la \'orbita \hfill\small(2:00)}
+
+\begin{decir}
+Me interesa la forma de la trayectoria, no el tiempo. Divido por $\dot\varphi^2=L^2/r^4$ y cambio a $u=1/r$.
+\end{decir}
+\[
+\Bigl(\frac{du}{d\varphi}\Bigr)^2=\frac{1}{b^2}-u^2+\rs u^3
+\;\;\Longrightarrow\;\;
+\boxed{\;u''+u=\tfrac32\,\rs\,u^2=\frac{3GM}{c^2}u^2\;}
+\]
+
+\begin{decir}
+Si quito el t\'ermino de la derecha, que es la correcci\'on relativista, la soluci\'on es $u_0=\sin\varphi/b$, es decir, la recta $y=b$. El t\'ermino extra es peque\~no cuando $\rs\ll b$, as\'i que lo trato como perturbaci\'on.
+\end{decir}
+
+%------------------------------------------------------------
+\section{Soluci\'on perturbativa y resultado \hfill\small(3:00)}
+
+\begin{decir}
+Escribo $u=u_0+u_1$ y me quedo a primer orden en $\rs$.
+\end{decir}
+\[
+u_1''+u_1=\frac{3\rs}{2b^2}\sin^2\varphi=\frac{3\rs}{4b^2}\bigl(1-\cos2\varphi\bigr).
+\]
+
+\begin{decir}
+Propongo $u_1=A+B\cos2\varphi$ e igualo coeficientes: $A=3\rs/4b^2$, $B=\rs/4b^2$. Usando $\cos2\varphi=2\cos^2\varphi-1$ queda
+\end{decir}
+\[
+u(\varphi)=\frac{\sin\varphi}{b}+\frac{\rs}{2b^2}\bigl(1+\cos^2\varphi\bigr).
+\]
+
+\begin{decir}
+Ahora busco d\'onde $u=0$, o sea cu\'ando el rayo est\'a en el infinito. Sin gravedad ser\'ia en $\varphi=0$ y $\varphi=\pi$. Con la correcci\'on, por simetr\'ia es en $\varphi=\pi+\delta$ con $\delta$ peque\~no: $\sin(\pi+\delta)\approx-\delta$ y $\cos^2\approx1$.
+\end{decir}
+\[
+-\frac{\delta}{b}+\frac{\rs}{b^2}=0\;\Rightarrow\;\delta=\frac{\rs}{b},
+\qquad
+\boxed{\;\ahat=2\delta=\frac{2\rs}{b}=\frac{4GM}{c^2\,b}\;}
+\]
+
+\begin{decir}
+Este es el doble del c\'alculo newtoniano, $2GM/c^2b$. Newton solo ve la parte temporal, $g_{tt}$; la relatividad suma la curvatura espacial, $g_{rr}$, y ambas contribuyen lo mismo.
+\end{decir}
+
+\begin{notebook}
+Secci\'on 3.3--3.4 y verificaci\'on con SymPy (secci\'on 4): mostrar que el residuo es 0 y que SymPy devuelve $\ahat=2\rs/b$. Es un buen momento para decir que el resultado est\'a verificado simb\'olicamente.
+\end{notebook}
+
+%------------------------------------------------------------
+\section{El Sol y las observaciones \hfill\small(2:00)}
+
+\begin{decir}
+Para un rayo que roza el limbo solar, $b=R_\odot$. Con $GM_\odot/c^2\approx1.477$~km y $R_\odot\approx6.96\times10^{5}$~km, el cociente $\rs/R_\odot\approx4\times10^{-6}$: estamos en campo muy d\'ebil, as\'i que la aproximaci\'on es excelente.
+\end{decir}
+\[
+\ahat_\odot=\frac{4GM_\odot}{c^2R_\odot}\approx 8.5\times10^{-6}\ \text{rad}\approx 1.75''\qquad(\text{Newton: }0.87'').
+\]
+
+\begin{decir}
+En 1919 Eddington organiz\'o expediciones al eclipse total, a Sobral y a la isla de Pr\'incipe, y midi\'o la posición aparente de estrellas cercanas al Sol. Los resultados, alrededor de $1.98''$ y $1.61''$ con errores grandes, favorecieron el valor de Einstein sobre el newtoniano. Hoy, con interferometr\'ia de radio (VLBI), la concordancia con la relatividad es mejor que el 0.1\,\%.
+\end{decir}
+
+\begin{notebook}
+Secci\'on 7: ense\~nar la gr\'afica con la curva de RG, la de Newton y los dos puntos de Eddington. \textbf{Antes de exponer, verificar las cifras de Eddington/VLBI en la fuente primaria} (Dyson, Eddington \& Davidson 1920), porque en el notebook est\'an como valores de referencia.
+\end{notebook}
+
+%------------------------------------------------------------
+\section{Integral exacta y esfera de fotones \hfill\small(1:30)}
+
+\begin{decir}
+Todo lo anterior es primer orden. Sin aproximar, el \'angulo barrido es una integral entre $0$ y la m\'inima distancia $u_0$:
+\end{decir}
+\[
+\Delta\varphi=2\int_0^{u_0}\frac{du}{\sqrt{b^{-2}-u^2+\rs u^3}},\qquad \ahat=\Delta\varphi-\pi .
+\]
+
+\begin{decir}
+La resolv\'i num\'ericamente. Para $b=1000\,GM/c^2$ el error de la f\'ormula de primer orden es de 0.3\,\%; para $b=10\,GM/c^2$ ya es 32\,\%. El segundo orden, $\tfrac{15\pi}{4}(GM/c^2b)^2$, ajusta el valor exacto con cuatro cifras. Y cuando $b$ baja hasta $b_c=3\sqrt3\,GM/c^2\approx5.2\,GM/c^2$, la deflexi\'on diverge: es el radio de captura de la esfera de fotones en $r=3GM/c^2$.
+\end{decir}
+
+\begin{notebook}
+Secci\'on 5 (gr\'afica de $\ahat$ exacto vs.\ primer orden) y secci\'on 8 (divergencia). Si hay preguntas sobre el segundo orden, la deducci\'on completa est\'a en 5.3.
+\end{notebook}
+
+%------------------------------------------------------------
+\section{Conclusiones \hfill\small(1:00)}
+
+\begin{enumerate}[leftmargin=*]
+\item La luz sigue geod\'esicas nulas de Schwarzschild, que cumplen $u''+u=3GMu^2/c^2$.
+\item A primer orden, $\ahat=4GM/(c^2b)$: el doble del valor newtoniano.
+\item Para el Sol, $\ahat_\odot\approx1.75''$, confirmado por el eclipse de 1919 y, con mucha m\'as precisi\'on, por VLBI.
+\item La integral exacta muestra que la aproximaci\'on es buena para $b\gg GM/c^2$ y que diverge en $b_c=3\sqrt3\,GM/c^2$.
+\end{enumerate}
+
+\begin{decir}
+En resumen: una sola ecuaci\'on, $u''+u=3GMu^2/c^2$, contiene la desviaci\'on de la luz por el Sol y tambi\'en el l\'imite de captura de un agujero negro. Gracias; con gusto respondo preguntas.
+\end{decir}
+
+%------------------------------------------------------------
+\section*{Posibles preguntas}
+\begin{description}[leftmargin=1.5cm,style=nextline]
+\item[\textquestiondown Por qu\'e el doble de Newton?] Newton solo incluye $g_{tt}$ (potencial); la relatividad a\~nade la curvatura espacial $g_{rr}$, que aporta otra mitad igual. En el formalismo PPN, $\ahat=\tfrac{1+\gamma}{2}\tfrac{4GM}{c^2b}$ con $\gamma=1$.
+\item[\textquestiondown Por qu\'e se puede descartar la soluci\'on homog\'enea?] $\cos\varphi$ queda excluido por la simetr\'ia respecto del punto de m\'aximo acercamiento; $\sin\varphi$ solo redefine $b$, lo que se comprueba con la integral primera (secci\'on 3.2).
+\item[\textquestiondown D\'onde falla la aproximaci\'on?] Cuando $b$ es comparable a $GM/c^2$; el error relativo de primer orden crece como $\sim GM/(c^2b)$ (secci\'on 5).
+\item[\textquestiondown C\'omo se obtuvo el 15$\pi$/4?] Perturbaci\'on a segundo orden; el t\'ermino resonante $\psi\sin\psi$ produce el $\pi$ (secci\'on 5.3).
+\end{description}
+
+\end{document}
