@@ -307,10 +307,79 @@ plt.tight_layout(); plt.show()
 """)
 
 md(r"""
-La fórmula de primer orden coincide con la solución exacta para $b\gg GM/c^2$ (el error relativo decrece como $\sim 1/b$). Al acercarse $b$ a $b_c\approx5.2\,GM/c^2$ la deflexión diverge (sección 8). El siguiente orden del desarrollo es $\hat\alpha = \frac{4GM}{c^2b} + \frac{15\pi}{4}\left(\frac{GM}{c^2b}\right)^2+\dots$, que podemos comprobar:
+La fórmula de primer orden coincide con la solución exacta para $b\gg GM/c^2$ (el error relativo decrece como $\sim 1/b$). Al acercarse $b$ a $b_c\approx5.2\,GM/c^2$ la deflexión diverge (sección 8).
+
+### 5.3 Deducción del segundo orden: $\hat\alpha=\dfrac{4GM}{c^2b}+\dfrac{15\pi}{4}\left(\dfrac{GM}{c^2b}\right)^2$
+
+Seguimos el método de la sección 3, un orden más. Sea $M\equiv GM/c^2$ (longitud), así $r_s=2M$ y la ecuación (3) es $u''+u=3Mu^2$.
+
+**Paso 1: coordenada simétrica.** La ecuación es invariante bajo $\varphi\to\pi-\varphi$, y la órbita es simétrica respecto del punto de máximo acercamiento. Definimos $\psi=\varphi-\pi/2$ (así $\psi=0$ es el máximo acercamiento y la solución es par en $\psi$). Como $\sin\varphi=\cos\psi$, la solución de primer orden (4) queda
+
+$$u=\frac{\cos\psi}{b}+\frac{M}{b^2}\left(1+\sin^2\psi\right)+u_2,\qquad u_2=O(M^2).$$
+
+**Paso 2: ecuación para $u_2$.** Sustituimos en $u''+u=3Mu^2$ y conservamos el orden $M^2$ (los órdenes $M^0$ y $M^1$ ya se cancelan por construcción):
+
+$$u_2''+u_2=3M\cdot2\,u_0u_1=6M\,\frac{\cos\psi}{b}\cdot\frac{M}{b^2}\left(1+\sin^2\psi\right)=\frac{6M^2}{b^3}\cos\psi\left(1+\sin^2\psi\right).$$
+
+**Paso 3: descomponer la fuerza en armónicos.** Usamos $\sin^2\psi\cos\psi=\tfrac14\left(\cos\psi-\cos3\psi\right)$ (de $\cos3\psi=4\cos^3\psi-3\cos\psi$ y $\sin^2\psi\cos\psi=\cos\psi-\cos^3\psi$):
+
+$$\cos\psi\left(1+\sin^2\psi\right)=\frac54\cos\psi-\frac14\cos3\psi
+\;\Longrightarrow\;
+u_2''+u_2=\frac{15M^2}{2b^3}\cos\psi-\frac{3M^2}{2b^3}\cos3\psi .$$
+
+**Paso 4: resolver término a término.**
+
+- *Término en $\cos3\psi$ (no resonante):* con $u=A\cos3\psi$, $u''+u=(1-9)A\cos3\psi=-8A\cos3\psi$. Igualando a $-\dfrac{3M^2}{2b^3}\cos3\psi$ se obtiene $A=\dfrac{3M^2}{16b^3}$.
+- *Término en $\cos\psi$ (**resonante**, pues $\cos\psi$ es solución homogénea):* se propone $u=B\,\psi\sin\psi$. Entonces $u''=B\left(2\cos\psi-\psi\sin\psi\right)$ y $u''+u=2B\cos\psi$. Igualando a $\dfrac{15M^2}{2b^3}\cos\psi$ se obtiene $B=\dfrac{15M^2}{4b^3}$. Este es un término "secular" ($\propto\psi$) y es el que produce el coeficiente $15\pi/4$.
+
+Por lo tanto
+
+$$u_2=\frac{15M^2}{4b^3}\,\psi\sin\psi+\frac{3M^2}{16b^3}\cos3\psi+C\cos\psi .$$
+
+La elección $\psi\sin\psi$ (y no $\varphi\cos\varphi$) es la que mantiene la solución par en $\psi$. La constante $C=O(M^2/b^3)$ (solución homogénea) solo reescala el término $\cos\psi/b$ en una cantidad relativa $O(M^2/b^2)$; como multiplica a $\cos\psi\approx-\delta$ en el punto de salida, afecta al ángulo solo a orden $M^3$ y no la necesitamos.
+
+**Paso 5: ángulo de salida.** El rayo sale al infinito en $\psi=\pi/2+\delta$ con $u=0$. Desarrollamos cada término con $\delta$ pequeño:
+
+$$\cos\psi=-\sin\delta\approx-\delta,\qquad \sin^2\psi=\cos^2\delta\approx1-\delta^2,\qquad \psi\sin\psi\approx\frac\pi2+\delta,\qquad\cos3\psi=\sin3\delta\approx3\delta.$$
+
+Multiplicando $u(\psi)=0$ por $b$ y escribiendo $x\equiv M/b$:
+
+$$-\delta+x\left(2-\delta^2\right)+\frac{15}{4}x^2\left(\frac\pi2+\delta\right)+\frac{9}{16}x^2\delta+\dots=0 .$$
+
+Como $\delta=O(x)$, los términos $x\delta^2$, $x^2\delta$ son $O(x^3)$ y se descartan. Queda
+
+$$\delta=2x+\frac{15\pi}{8}x^2+O(x^3).$$
+
+**Paso 6: deflexión.** $\Delta\varphi=2\psi_\infty=\pi+2\delta$, luego
+
+$$\hat\alpha=2\delta=4x+\frac{15\pi}{4}x^2=\frac{4GM}{c^2b}+\frac{15\pi}{4}\left(\frac{GM}{c^2b}\right)^2+O\!\left(\frac{M^3}{b^3}\right)\qquad\blacksquare$$
+
+El primer término reproduce (5) y el segundo es la corrección buscada. Verificamos los pasos con SymPy y luego numéricamente.
 """)
 
 code(r"""
+# Verificación simbólica de la solución de segundo orden
+psi, b, m, e = sp.symbols('psi b m e', positive=True)   # M = e*m  (e marca el orden)
+M = e*m
+u = (sp.cos(psi)/b + M/b**2*(1 + sp.sin(psi)**2)
+     + M**2/b**3*(sp.Rational(15, 4)*psi*sp.sin(psi) + sp.Rational(3, 16)*sp.cos(3*psi)))
+
+# 1) u'' + u - 3 M u^2 debe anularse hasta O(e^2)
+res = sp.expand(sp.diff(u, psi, 2) + u - 3*M*u**2)
+res_hasta_e2 = sum(sp.trigsimp(sp.expand_trig(res.coeff(e, k))) for k in range(3))
+print("Residuo de la EDO hasta O(M^2):", sp.simplify(res_hasta_e2))
+
+# 2) ángulo de salida: u(pi/2 + delta) = 0 con delta = d1 e + d2 e^2
+d1, d2 = sp.symbols('d1 d2')
+delta = d1*e + d2*e**2
+expr = sp.series(sp.expand((b*u).subs(psi, sp.pi/2 + delta)), e, 0, 3).removeO()
+sol = sp.solve([expr.coeff(e, 1), expr.coeff(e, 2)], [d1, d2], dict=True)[0]
+alpha2 = sp.simplify(2*(sol[d1] + sol[d2]))   # alpha = 2*delta, con e -> 1
+print("alpha =", sp.expand(alpha2.subs(m, sp.Symbol('M'))))
+""")
+
+code(r"""
+# Comprobación numérica con la integral exacta
 b = 200.0
 a2 = 4/b + 15*np.pi/4/b**2
 print(f"exacto: {alpha_exacto(b):.8f}   1er orden: {4/b:.8f}   2º orden: {a2:.8f}")
