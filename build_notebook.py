@@ -180,6 +180,103 @@ y el ángulo es $\alpha_N=\Delta v_\perp/c=\dfrac{2GM}{c^2b}$. La relatividad ge
 """)
 
 md(r"""
+### 3.5 Figura: geometría del problema y efecto de la perturbación
+
+La figura resume las secciones 2 y 3 (con $b=12\,GM/c^2$, es decir $r_s/b\approx0.17$, para que los ángulos se vean; para el Sol $\hat\alpha$ es ~$10^{6}$ veces menor):
+
+- **$M$** está en el origen. $\varphi$ es el ángulo polar del fotón medido desde el eje de referencia $\varphi=0$ y $r$ es su distancia a $M$.
+- **Orden cero** ($u_0=\sin\varphi/b$): la recta horizontal $y=b$, que barre $\varphi$ de $0$ a $\pi$.
+- **Perturbación** $u_1=\dfrac{r_s}{2b^2}\left(1+\cos^2\varphi\right)$: aumenta $u=1/r$, es decir acerca el rayo a $M$ y lo curva. La curva azul es $u=u_0+u_1$ y la roja es la integración numérica de $u''+u=3Mu^2$ con el mismo $b$ (con $r_s/b$ tan grande se separan un poco; para $r_s\ll b$ coinciden).
+- **Ángulos de entrada y salida:** $u=0$ ocurre en $\varphi=-\delta$ y $\varphi=\pi+\delta$ con $\delta=r_s/b$. Cada asíntota queda inclinada un ángulo $\delta$ respecto de la recta original, y el ángulo entre ambas direcciones es la deflexión $\hat\alpha=2\delta=2r_s/b$.
+""")
+
+code(r"""
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.patches import Arc, Circle
+from scipy.integrate import solve_ivp
+
+M, b = 1.0, 12.0            # unidades GM/c^2 = 1
+rs = 2*M
+delta = rs/b                # primer orden
+
+# (1) solución de primer orden  u = u0 + u1
+phi = np.linspace(-delta + 0.012, np.pi + delta - 0.012, 3000)
+u_1 = np.sin(phi)/b + rs/(2*b**2)*(1 + np.cos(phi)**2)
+x1, y1 = np.cos(phi)/u_1, np.sin(phi)/u_1
+
+# (2) integración numérica de  u'' + u = 3 M u^2  con el mismo b (simétrica en phi = pi/2)
+u_p = min(r.real for r in np.roots([rs, -1, 0, 1/b**2]) if abs(r.imag) < 1e-12 and r.real > 0)
+f = lambda p, y: [y[1], -y[0] + 3*M*y[0]**2]
+ev = lambda p, y: y[0] - 1e-3
+ev.terminal, ev.direction = True, -1
+fw = solve_ivp(f, [np.pi/2,  4], [u_p, 0], events=ev, rtol=1e-10, atol=1e-12, dense_output=True)
+bw = solve_ivp(f, [np.pi/2, -2], [u_p, 0], events=ev, rtol=1e-10, atol=1e-12, dense_output=True)
+pb, pf = np.linspace(bw.t[-1], np.pi/2, 800), np.linspace(np.pi/2, fw.t[-1], 800)
+p_n = np.concatenate([pb, pf]); u_n = np.concatenate([bw.sol(pb)[0], fw.sol(pf)[0]])
+xn, yn = np.cos(p_n)/u_n, np.sin(p_n)/u_n
+
+L = 36
+def recorta(x, y):
+    m = np.abs(x) <= L
+    return np.where(m, x, np.nan), np.where(m, y, np.nan)
+x1, y1 = recorta(x1, y1); xn, yn = recorta(xn, yn)
+
+fig, ax = plt.subplots(figsize=(10, 5.4))
+ax.set_aspect("equal"); ax.set(xlim=(-L, L), ylim=(-8, 23)); ax.axis("off")
+
+# masa
+ax.add_patch(Circle((0, 0), rs, color="k", zorder=5))
+ax.text(0, 0, "M", color="w", ha="center", va="center", zorder=6, fontsize=12)
+
+# orden cero y eje de referencia
+ax.plot([-L, L], [b, b], "--", color="gray", lw=1.2)
+ax.text(-L + 0.5, b + 0.7, r"sin gravedad: $u_0=\sin\varphi/b$", color="gray", fontsize=10)
+ax.plot([0, L], [0, 0], ":", color="k", lw=1)
+ax.text(L - 0.5, -1.6, r"$\varphi=0$", ha="right", fontsize=11)
+
+# trayectorias
+ax.plot(xn, yn, ":", color="tab:red", lw=2.4, label=r"numérica: $u''+u=3Mu^2$")
+ax.plot(x1, y1, color="tab:blue", lw=2.2, label=r"primer orden: $u=u_0+u_1$")
+
+# asíntotas y punto de cruce I
+yI = b/np.cos(delta)
+xs = np.array([0, L])
+ax.plot(xs, yI - xs*np.tan(delta), "--", color="tab:blue", lw=1, alpha=.7)        # entrada
+ax.plot(-xs, yI - (-xs)*np.tan(delta), "--", color="tab:blue", lw=1, alpha=.5)    # prolongación
+ax.plot(-xs, yI + (-xs)*np.tan(-delta)*-1, "--", color="tab:blue", lw=1, alpha=.7) # salida
+ax.add_patch(Arc((0, yI), 14, 14, theta1=180 - np.degrees(delta), theta2=180 + np.degrees(delta), lw=1.8))
+ax.text(-9.5, yI - 0.3, r"$\hat\alpha=2\delta$", ha="right", va="center", fontsize=13)
+
+# ángulos de entrada/salida en el origen
+ax.plot([0, L], [0, -L*np.tan(delta)], ":", color="tab:blue", lw=1)
+ax.plot([0, -L], [0, -L*np.tan(delta)], ":", color="tab:blue", lw=1)
+ax.add_patch(Arc((0, 0), 18, 18, theta1=180, theta2=180 + np.degrees(delta), lw=1.6))
+ax.text(-11.5, -1.9, r"$\delta$", fontsize=12)
+ax.text(22, -5.6, r"$\varphi=-\delta$", fontsize=10, color="tab:blue")
+ax.text(-30, -5.6, r"$\varphi=\pi+\delta$", fontsize=10, color="tab:blue")
+
+# parámetro de impacto
+ax.plot([0, 0], [rs, b], color="k", lw=1)
+ax.text(0.8, 6.5, "b", fontsize=13)
+
+# phi y r en un punto del rayo
+phiP = 0.75
+uP = np.sin(phiP)/b + rs/(2*b**2)*(1 + np.cos(phiP)**2)
+rP = 1/uP; P = (rP*np.cos(phiP), rP*np.sin(phiP))
+ax.plot([0, P[0]], [0, P[1]], color="k", lw=1.2); ax.plot(*P, "o", color="tab:blue", zorder=6)
+ax.add_patch(Arc((0, 0), 12, 12, theta1=0, theta2=np.degrees(phiP), lw=1.6))
+ax.text(7.2, 1.7, r"$\varphi$", fontsize=13)
+ax.text(P[0]/2 + 0.6, P[1]/2 - 1.4, "r", fontsize=13)
+
+ax.legend(loc="lower center", ncol=2, frameon=False, fontsize=10)
+ax.set_title(r"Deflexión de la luz: $\hat\alpha=2\delta$, $\delta=r_s/b$  (ángulos exagerados: $r_s/b\approx0.17$)", fontsize=11)
+plt.tight_layout()
+plt.savefig("figura_deflexion.png", dpi=150, bbox_inches="tight")
+plt.show()
+""")
+
+md(r"""
 ## 4. Verificación simbólica con SymPy
 
 Comprobamos que $u_1$ resuelve la ecuación perturbada y que el ángulo de salida da $\hat\alpha = 2r_s/b$.
